@@ -25,6 +25,8 @@ const characters: Character[] = [
 
 const phraseAudio: Record<string, AudioBuffer> = {};
 
+const formatter = new Intl.NumberFormat("en-US");
+
 let keyItr = 0;
 
 const audioCtx = new AudioContext();
@@ -57,9 +59,13 @@ function App() {
 
         setPhrases([
           ...phrases,
-          { key: keyItr, word: char.kanji, translation: char.num.toString() },
+          {
+            key: keyItr,
+            word: char.kanji,
+            translation: formatter.format(char.num),
+          },
         ]);
-        setTranslation(char.num.toString());
+        setTranslation(formatter.format(char.num));
         keyItr++;
 
         if (phraseAudio[char.kanji]) {
