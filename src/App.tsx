@@ -1,25 +1,12 @@
 import { useState } from "react";
 import { characters } from "./data/characters";
+import AudioHandler from "./utils/AudioHandler";
 
-import type { Character } from "./data/characters";
-type KanjiGroup = { key: string; kanjiGroup: string; translation: string };
+import type { Character, KanjiGroup } from "./types";
 
 // const numFormatter = new Intl.NumberFormat("en-US");
 
-const loadedAudio: Record<string, AudioBuffer> = {};
-const audioContext = new AudioContext();
-let currentlyPlaying = "";
-
-async function setupAudio() {
-  for (const char of characters) {
-    const data = await fetch(char.file);
-    const arrayBuffer = await data.arrayBuffer();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    loadedAudio[char.kanji] = audioBuffer;
-  }
-}
-setupAudio();
-
+const a = new AudioHandler();
 let keyItr = 0;
 
 export default function App() {
@@ -27,7 +14,8 @@ export default function App() {
   const [translation, setTranslation] = useState("");
 
   function handleCharTap(char: Character) {
-    if (currentlyPlaying !== "") return;
+    if (a.currentlyPlaying) return;
+    a.playInstance(char.kanji);
 
     setChunks([
       ...chunks,
@@ -38,17 +26,19 @@ export default function App() {
       },
     ]);
     setTranslation(char.translation);
-
-    if (loadedAudio[char.kanji]) {
-      const source = audioContext.createBufferSource();
-      source.buffer = loadedAudio[char.kanji];
-      source.connect(audioContext.destination);
-      source.start();
-    }
   }
 
   function handlePlayTap() {
-    if (currentlyPlaying === "") playQueue(chunks);
+    if (!a.currentlyPlaying)
+      a.playQueue(
+        chunks,
+        (a: KanjiGroup[]) => {
+          setChunks(a);
+        },
+        (a: string) => {
+          setTranslation(a);
+        }
+      );
   }
 
   const buttons = characters.map((char) => (
@@ -69,7 +59,7 @@ export default function App() {
           key={s.key}
           className={
             "p-2 m-1 text-6xl " +
-            (s.key === currentlyPlaying ? "text-amber-300" : "")
+            (s.key === a.currentlyPlaying ? "text-amber-300" : "")
           }
         >
           {s.kanjiGroup}
@@ -78,24 +68,6 @@ export default function App() {
     ) : (
       <div className="p-2 m-1 text-3xl">&nbsp;</div>
     );
-
-  function playQueue(queue: KanjiGroup[]) {
-    if (queue.length > 0 && loadedAudio[queue[0].kanjiGroup]) {
-      currentlyPlaying = queue[0].key;
-      setTranslation(queue[0].translation);
-      const source = audioContext.createBufferSource();
-      source.buffer = loadedAudio[queue[0].kanjiGroup];
-      source.connect(audioContext.destination);
-      source.onended = () => {
-        setChunks(queue.slice(1));
-        playQueue(queue.slice(1));
-      };
-      source.start();
-    } else {
-      currentlyPlaying = "";
-      setTranslation("");
-    }
-  }
 
   return (
     <main className="flex h-screen w-screen flex-col">
