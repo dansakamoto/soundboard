@@ -1,4 +1,4 @@
-import { characters, ichiMods, moreExceptions } from "../_data/characters";
+import { characters, ichiMods, issenException } from "../_data/characters";
 
 import type { KanjiGroup } from "../types";
 
@@ -15,7 +15,7 @@ export class AudioHandler {
   waitRemaining = bufferAllowance;
 
   async setupAudio() {
-    const toLoad = [...Object.values(ichiMods), ...moreExceptions];
+    const toLoad = [...Object.values(ichiMods), issenException];
     for (const c of characters) toLoad.push(c.kanji);
 
     for (const x of toLoad) {
@@ -27,7 +27,7 @@ export class AudioHandler {
   }
 
   async loadAudio(s: string) {
-    if (!(s in this.loadAudio)) {
+    if (!(s in this.loadedAudio)) {
       const TTS = await fetch("/getAudio", {
         method: "POST",
         headers: {

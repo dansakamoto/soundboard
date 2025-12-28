@@ -27,4 +27,4 @@ export const ichiMods = {
   兆: "一兆",
 };
 
-export const moreExceptions = ["一千"];
+export const issenException = "一千";

@@ -6,12 +6,12 @@ import fetch from "node-fetch";
 import {
   characters,
   ichiMods,
-  moreExceptions,
+  issenException,
 } from "../../client/_data/characters";
 
-const highNums = Object.keys(ichiMods).concat(moreExceptions);
+const highNums = Object.keys(ichiMods).concat([issenException]);
 
-const list = Object.values(ichiMods).concat(moreExceptions);
+const list = Object.values(ichiMods).concat([issenException]);
 for (const c of characters) {
   list.push(c.kanji);
 }
