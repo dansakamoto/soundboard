@@ -3,7 +3,7 @@ import { characters } from "../_data/characters";
 import type { KanjiGroup } from "../types";
 
 let keyItr = 0;
-const bufferAllowance = 2000;
+const bufferAllowance = 1000;
 export class AudioHandler {
   constructor() {
     this.setupAudio();
