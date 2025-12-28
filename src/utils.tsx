@@ -1,6 +1,6 @@
-import { characters } from "../_data/characters";
+import { characters } from "./_data/characters";
 
-import type { KanjiGroup } from "../types";
+import type { KanjiGroup } from "./types";
 
 export default class AudioHandler {
   constructor() {

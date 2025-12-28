@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AudioHandler from "./_utils/AudioHandler";
+import AudioHandler from "./utils";
 
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
