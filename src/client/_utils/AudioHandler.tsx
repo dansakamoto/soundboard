@@ -23,6 +23,36 @@ export class AudioHandler {
     }
   }
 
+  async loadAudio(s: string) {
+    if (!(s in this.loadAudio)) {
+      const TTS = await fetch("/getAudio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: s }),
+      });
+
+      const res = await TTS.json();
+      //console.log(TTSResult.url);
+
+      if (res.type === "data") {
+        const arrayBuffer = base64ToArrayBuffer(res.audioData);
+        const audioBuffer = await this.audioContext.decodeAudioData(
+          arrayBuffer
+        );
+        this.loadedAudio[s] = audioBuffer;
+      } else {
+        const data = await fetch(res.url);
+        const arrayBuffer = await data.arrayBuffer();
+        const audioBuffer = await this.audioContext.decodeAudioData(
+          arrayBuffer
+        );
+        this.loadedAudio[s] = audioBuffer;
+      }
+    }
+  }
+
   playInstance(kanji: string) {
     if (this.loadedAudio[kanji]) {
       const source = this.audioContext.createBufferSource();
@@ -64,4 +94,13 @@ export class AudioHandler {
       this.playQueue(newQueue, callback);
     }
   }
+}
+
+function base64ToArrayBuffer(base64: string) {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
 }

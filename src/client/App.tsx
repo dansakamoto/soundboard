@@ -34,6 +34,8 @@ export default function App() {
     ) {
       const updated = [...chunks];
       const newGroup = chunks[chunks.length - 1].group + trigger;
+      a.loadAudio(newGroup);
+
       updated[updated.length - 1].group = newGroup;
 
       setChunks(updated);
