@@ -19,10 +19,12 @@ export default function App() {
     if (isPlaying) return;
 
     if (trigger === "play") {
-      setIsPlaying(true);
-      a.playQueue(chunks, (c: KanjiGroup[]) => {
-        audioCallback(c);
-      });
+      if (chunks.length > 0) {
+        setIsPlaying(true);
+        a.playQueue(chunks, (c: KanjiGroup[]) => {
+          audioCallback(c);
+        });
+      }
       return;
     }
 
