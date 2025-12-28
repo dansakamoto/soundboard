@@ -1,6 +1,6 @@
-import { characters } from "../data/characters";
+import { characters } from "../_data/characters";
 
-import type { KanjiGroup } from "../types/KanjiGroup";
+import type { KanjiGroup } from "../types";
 
 export default class AudioHandler {
   constructor() {
@@ -13,12 +13,13 @@ export default class AudioHandler {
 
   async setupAudio() {
     for (const char of characters) {
-      const data = await fetch(char.file);
+      const data = await fetch("audio/core/" + char.kanji + ".mp3");
       const arrayBuffer = await data.arrayBuffer();
       const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
       this.loadedAudio[char.kanji] = audioBuffer;
     }
   }
+
   playInstance(kanji: string) {
     if (this.loadedAudio[kanji]) {
       const source = this.audioContext.createBufferSource();
@@ -28,25 +29,19 @@ export default class AudioHandler {
     }
   }
 
-  playQueue(
-    queue: KanjiGroup[],
-    setChunks: (kg: KanjiGroup[]) => void,
-    setTranslation: (s: string) => void
-  ) {
-    if (queue.length > 0 && this.loadedAudio[queue[0].kanjiGroup]) {
+  playQueue(queue: KanjiGroup[], callback: (kg: KanjiGroup[]) => void) {
+    if (queue.length > 0 && this.loadedAudio[queue[0].group]) {
       this.currentlyPlaying = queue[0].key;
-      setTranslation(queue[0].translation);
       const source = this.audioContext.createBufferSource();
-      source.buffer = this.loadedAudio[queue[0].kanjiGroup];
+      source.buffer = this.loadedAudio[queue[0].group];
       source.connect(this.audioContext.destination);
       source.onended = () => {
-        setChunks(queue.slice(1));
-        this.playQueue(queue.slice(1), setChunks, setTranslation);
+        callback(queue.slice(1));
+        this.playQueue(queue.slice(1), callback);
       };
       source.start();
     } else {
       this.currentlyPlaying = "";
-      setTranslation("");
     }
   }
 }

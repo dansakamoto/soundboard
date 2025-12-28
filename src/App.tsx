@@ -1,92 +1,48 @@
 import { useState } from "react";
-import { characters } from "./data/characters";
-import AudioHandler from "./utils/AudioHandler";
+import AudioHandler from "./_utils/AudioHandler";
 
-import type { Character, KanjiGroup } from "./types";
+import PhraseViewer from "./_components/PhraseViewer";
+import ButtonBoard from "./_components/ButtonBoard";
 
-// const numFormatter = new Intl.NumberFormat("en-US");
+import type { KanjiGroup } from "./types";
 
 const a = new AudioHandler();
+
 let keyItr = 0;
 
 export default function App() {
   const [chunks, setChunks] = useState<KanjiGroup[]>([]);
-  const [translation, setTranslation] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  function handleCharTap(char: Character) {
-    if (a.currentlyPlaying) return;
-    a.playInstance(char.kanji);
+  function handleTap(trigger: string) {
+    if (isPlaying) return;
 
-    setChunks([
-      ...chunks,
-      {
-        key: "phrase-" + keyItr++,
-        kanjiGroup: char.kanji,
-        translation: char.translation,
-      },
-    ]);
-    setTranslation(char.translation);
-  }
-
-  function handlePlayTap() {
-    if (!a.currentlyPlaying)
-      a.playQueue(
-        chunks,
-        (a: KanjiGroup[]) => {
-          setChunks(a);
+    if (trigger === "play") {
+      setIsPlaying(true);
+      a.playQueue(chunks, (c: KanjiGroup[]) => {
+        audioCallback(c);
+      });
+    } else {
+      a.playInstance(trigger);
+      setChunks([
+        ...chunks,
+        {
+          key: "grouping-" + keyItr++,
+          group: trigger,
         },
-        (a: string) => {
-          setTranslation(a);
-        }
-      );
+      ]);
+    }
   }
 
-  const buttons = characters.map((char) => (
-    <button
-      key={char.kanji}
-      className="p-1"
-      onPointerDown={() => handleCharTap(char)}
-      style={{ touchAction: "manipulation" }}
-    >
-      {char.kanji}
-    </button>
-  ));
-
-  const phraseList =
-    chunks.length > 0 ? (
-      chunks.map((s) => (
-        <li
-          key={s.key}
-          className={
-            "p-2 m-1 text-6xl " +
-            (s.key === a.currentlyPlaying ? "text-amber-300" : "")
-          }
-        >
-          {s.kanjiGroup}
-        </li>
-      ))
-    ) : (
-      <div className="p-2 m-1 text-3xl">&nbsp;</div>
-    );
+  function audioCallback(c: KanjiGroup[]) {
+    setChunks(c);
+    if (c.length === 0) setIsPlaying(false);
+  }
 
   return (
     <main className="flex h-screen w-screen flex-col">
-      <div className="h-1/5 flex flex-col justify-evenly">
-        <ul id="viewer" className="flex">
-          {phraseList}
-        </ul>
-        <div className="flex justify-center text-3xl">{translation}</div>
-      </div>
-      <div className="flex flex-col">
-        <div className="text-6xl flex justify-center">{buttons}</div>
-        <button
-          className="text-3xl"
-          onPointerDown={handlePlayTap}
-          style={{ touchAction: "manipulation" }}
-        >
-          Play
-        </button>
-      </div>
+      <PhraseViewer chunks={chunks} isPlaying={isPlaying} />
+      <ButtonBoard handleTap={handleTap} />
     </main>
   );
 }
