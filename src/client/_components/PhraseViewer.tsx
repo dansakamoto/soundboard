@@ -24,7 +24,7 @@ export default function PhraseViewer({
         </li>
       ))
     ) : (
-      <div className="p-2 m-1 text-3xl">&nbsp;</div>
+      <li className="p-2 m-1 text-6xl">&nbsp;</li>
     );
 
   const translation =
