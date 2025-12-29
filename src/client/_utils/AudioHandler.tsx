@@ -19,7 +19,7 @@ export class AudioHandler {
     for (const c of characters) toLoad.push(c.kanji);
 
     for (const x of toLoad) {
-      const data = await fetch("audio/core/" + x + ".mp3");
+      const data = await fetch("audio/ja/" + x + ".mp3");
       const arrayBuffer = await data.arrayBuffer();
       const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
       this.loadedAudio[x] = audioBuffer;

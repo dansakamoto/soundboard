@@ -27,4 +27,4 @@ dist-ssr
 dev
 
 .env
-public/audio/downloaded/*.mp3
+downloads/ja/*.b64
