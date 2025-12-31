@@ -5,8 +5,7 @@ import fs from "fs";
 import type { Request, Response } from "express";
 
 const apiExceptions = ["十一", "二兆"];
-
-const fsLogging = true;
+const fsLogging = false;
 
 export default async function getAudio(req: Request<string>, res: Response) {
   const serverPath = "downloads/ja/" + req.body.text + ".b64";
