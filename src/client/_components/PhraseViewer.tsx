@@ -7,9 +7,11 @@ import type { KanjiGroup } from "../types";
 export default function PhraseViewer({
   chunks,
   isPlaying,
+  interrupting,
 }: {
   chunks: KanjiGroup[];
   isPlaying: boolean;
+  interrupting: boolean;
 }) {
   useEffect(() => {
     if (isPlaying) {
@@ -42,11 +44,13 @@ export default function PhraseViewer({
     );
 
   const translation =
-    chunks.length === 0
-      ? ""
-      : isPlaying
-        ? getTranslation(chunks[0].group)
-        : getTranslation(chunks[chunks.length - 1].group);
+    interrupting === true
+      ? "stopping..."
+      : chunks.length === 0
+        ? ""
+        : isPlaying
+          ? getTranslation(chunks[0].group)
+          : getTranslation(chunks[chunks.length - 1].group);
 
   return (
     <div className="h-1/6 mt-10 flex flex-col justify-evenlyr">

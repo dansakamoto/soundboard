@@ -13,6 +13,7 @@ export class AudioHandler {
   audioContext = new AudioContext();
   currentlyPlaying = "";
   waitRemaining = bufferAllowance;
+  interrupt = false;
 
   async setupAudio() {
     const toLoad = [...Object.values(ichiMods), issenException];
@@ -40,16 +41,14 @@ export class AudioHandler {
 
       if (res.type === "data") {
         const arrayBuffer = base64ToArrayBuffer(res.audioData);
-        const audioBuffer = await this.audioContext.decodeAudioData(
-          arrayBuffer
-        );
+        const audioBuffer =
+          await this.audioContext.decodeAudioData(arrayBuffer);
         this.loadedAudio[s] = audioBuffer;
       } else {
         const data = await fetch(res.url);
         const arrayBuffer = await data.arrayBuffer();
-        const audioBuffer = await this.audioContext.decodeAudioData(
-          arrayBuffer
-        );
+        const audioBuffer =
+          await this.audioContext.decodeAudioData(arrayBuffer);
         this.loadedAudio[s] = audioBuffer;
       }
     }
@@ -65,6 +64,13 @@ export class AudioHandler {
   }
 
   playQueue(queue: KanjiGroup[], callback: (kg: KanjiGroup[]) => void) {
+    if (this.interrupt === true) {
+      this.currentlyPlaying = "";
+      callback([]);
+      this.interrupt = false;
+      return;
+    }
+
     if (queue.length === 0) {
       this.currentlyPlaying = "";
     } else if (this.loadedAudio[queue[0].group]) {

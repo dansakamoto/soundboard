@@ -14,9 +14,17 @@ let keyItr = 0;
 export default function App() {
   const [chunks, setChunks] = useState<KanjiGroup[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isInterrupting, setIsInterrupting] = useState(false);
 
   function handleTap(trigger: string) {
-    if (isPlaying) return;
+    if (isPlaying) {
+      if (trigger === "stop") {
+        a.interrupt = true;
+        setIsInterrupting(true);
+      }
+
+      return;
+    }
 
     if (trigger === "play") {
       if (chunks.length > 0) {
@@ -79,13 +87,20 @@ export default function App() {
 
   function audioCallback(c: KanjiGroup[]) {
     setChunks(c);
-    if (c.length === 0) setIsPlaying(false);
+    if (c.length === 0) {
+      setIsPlaying(false);
+      setIsInterrupting(false);
+    }
   }
 
   return (
     <main className="flex h-screen w-screen flex-col">
-      <PhraseViewer chunks={chunks} isPlaying={isPlaying} />
-      <ButtonBoard handleTap={handleTap} />
+      <PhraseViewer
+        chunks={chunks}
+        isPlaying={isPlaying}
+        interrupting={isInterrupting}
+      />
+      <ButtonBoard handleTap={handleTap} isPlaying={isPlaying} />
     </main>
   );
 }
