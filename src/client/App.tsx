@@ -48,7 +48,7 @@ export default function App() {
           trigger
             .replace("万", "一万")
             .replace("億", "一億")
-            .replace("兆", "一兆")
+            .replace("兆", "一兆"),
       )
     ) {
       const updated = [...chunks];
