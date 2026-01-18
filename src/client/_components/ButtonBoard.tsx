@@ -22,11 +22,11 @@ export default function ButtonBoard({
 
   const playbackButton = isPlaying ? (
     <button
-      className="text-6xl"
+      className="text-5xl"
       onPointerDown={() => handleTap("stop")}
       style={{ touchAction: "manipulation" }}
     >
-      ⏹
+      ◼
     </button>
   ) : (
     <button
