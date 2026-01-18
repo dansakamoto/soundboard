@@ -1,5 +1,5 @@
 import * as googleTTS from "google-tts-api";
-import { kanji2number } from "@geolonia/japanese-numeral";
+import bigKanji2number from "../../utils/bigKanji2number";
 import fs from "fs";
 
 import type { Request, Response } from "express";
@@ -26,7 +26,7 @@ export default async function getAudio(req: Request<string>, res: Response) {
   if (fsLogging) console.log("File not found, requesting from API");
 
   const t = req.body.text;
-  const num = !apiExceptions.includes(t) ? kanji2number(t) : t;
+  const num = !apiExceptions.includes(t) ? bigKanji2number(t) : t;
 
   const audioData = await googleTTS.getAudioBase64(num.toString(), {
     lang: "ja",
