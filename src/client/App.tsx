@@ -4,8 +4,7 @@ import { isValidNumber } from "./_utils/validators";
 
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
-
-import type { KanjiGroup } from "./types";
+import { KanjiGroup } from "./_components/KanjiGroup";
 
 const a = new AudioHandler();
 

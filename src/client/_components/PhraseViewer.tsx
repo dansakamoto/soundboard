@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import getTranslation from "../_utils/getTranslation";
 
-import type { KanjiGroup } from "../types";
+import type { KanjiGroup } from "./KanjiGroup";
 
 export default function PhraseViewer({
   chunks,

@@ -1,6 +1,6 @@
 import { characters, ichiMods, issenException } from "../_data/characters";
 
-import type { KanjiGroup } from "../types";
+import type { KanjiGroup } from "../_components/KanjiGroup";
 
 let keyItr = 0;
 const bufferAllowance = 1000;

@@ -1,4 +1,4 @@
-import type { Character } from "../types";
+import type { Character } from "../_components/KanjiGroup";
 
 export const characters: Character[] = [
   { kanji: "一", translation: "1" },
