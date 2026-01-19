@@ -57,6 +57,7 @@ export default function App() {
       )
     ) {
       const updated = [...chunks];
+
       const triggerMod = trigger
         .replace("万", "一万")
         .replace("億", "一億")
@@ -65,19 +66,19 @@ export default function App() {
 
       a.loadAudio(newGroup);
 
-      updated[updated.length - 1].push(triggerMod, "main");
+      if (["万", "億", "兆"].includes(trigger)) {
+        updated[updated.length - 1].push("一", "aux");
+      }
+      updated[updated.length - 1].push(trigger, "main");
 
       setChunks(updated);
     } else {
-      setChunks([
-        ...chunks,
-        new KanjiGroup(
-          trigger
-            .replace("万", "一万")
-            .replace("億", "一億")
-            .replace("兆", "一兆"),
-        ),
-      ]);
+      const kg = new KanjiGroup();
+      if (["万", "億", "兆"].includes(trigger)) {
+        kg.push("一", "aux");
+      }
+      kg.push(trigger, "main");
+      setChunks([...chunks, kg]);
     }
   }
 

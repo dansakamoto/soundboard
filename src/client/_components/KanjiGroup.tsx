@@ -5,11 +5,10 @@ let keyItr = 0;
 
 export default class KanjiGroup {
   key: string;
-  segments: GroupPart[];
+  segments: GroupPart[] = [];
 
-  constructor(g: string) {
+  constructor() {
     this.key = "grouping-" + keyItr++;
-    this.segments = [{ key: `segment-${keyItr++}`, kanji: g, style: "main" }];
   }
 
   push(k: string, s: KanjiStyle) {
