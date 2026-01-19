@@ -1,25 +1,31 @@
 import { useState } from "react";
 import { AudioHandler } from "./_utils/AudioHandler";
 import { isValidNumber } from "./_utils/validators";
-
+import { auxPost, auxPre } from "./_data/characters";
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
-
-import type { KanjiGroup } from "./types";
+import KanjiGroup, { type KanjiStyle } from "./_components/KanjiGroup";
+import "./_style/theme-colors.css";
 
 const a = new AudioHandler();
 
-let keyItr = 0;
+export interface TapProps {
+  trigger: string;
+  color?: number;
+}
 
 export default function App() {
   const [chunks, setChunks] = useState<KanjiGroup[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isInterrupting, setIsInterrupting] = useState(false);
 
-  function handleTap(trigger: string) {
+  function handleTap(p: TapProps) {
+    const trigger = p.trigger;
+    const color = p.color;
+
     if (isPlaying) {
       if (trigger === "stop") {
-        a.interrupt = true;
+        a.cancelPlayback();
         setIsInterrupting(true);
       }
 
@@ -40,19 +46,20 @@ export default function App() {
 
     if (
       chunks.length > 0 &&
-      isValidNumber(chunks[chunks.length - 1].group + trigger)
+      isValidNumber(chunks[chunks.length - 1].asString() + trigger)
     ) {
       const updated = [...chunks];
-      const newGroup = chunks[chunks.length - 1].group + trigger;
+      const newGroup = chunks[chunks.length - 1].asString() + trigger;
       a.loadAudio(newGroup);
 
-      updated[updated.length - 1].group = newGroup;
+      const style = color !== null ? `theme-${color}` : "default";
+      updated[updated.length - 1].push(trigger, style as KanjiStyle);
 
       setChunks(updated);
     } else if (
       chunks.length > 0 &&
       isValidNumber(
-        chunks[chunks.length - 1].group +
+        chunks[chunks.length - 1].asString() +
           trigger
             .replace("万", "一万")
             .replace("億", "一億")
@@ -60,28 +67,40 @@ export default function App() {
       )
     ) {
       const updated = [...chunks];
-      const newGroup =
-        chunks[chunks.length - 1].group +
-        trigger
-          .replace("万", "一万")
-          .replace("億", "一億")
-          .replace("兆", "一兆");
+
+      const triggerMod = trigger
+        .replace("万", "一万")
+        .replace("億", "一億")
+        .replace("兆", "一兆");
+      const newGroup = chunks[chunks.length - 1].asString() + triggerMod;
+
       a.loadAudio(newGroup);
 
-      updated[updated.length - 1].group = newGroup;
+      if (trigger in auxPre) {
+        updated[updated.length - 1].push(auxPre[trigger], "aux");
+      }
+      const style = color !== null ? `theme-${color}` : "default";
+      updated[updated.length - 1].push(trigger, style as KanjiStyle);
+      if (trigger in auxPost) {
+        updated[updated.length - 1].push(auxPost[trigger], "aux");
+      }
 
       setChunks(updated);
     } else {
-      setChunks([
-        ...chunks,
-        {
-          key: "grouping-" + keyItr++,
-          group: trigger
-            .replace("万", "一万")
-            .replace("億", "一億")
-            .replace("兆", "一兆"),
-        },
-      ]);
+      const kg = new KanjiGroup();
+
+      if (trigger in auxPre) {
+        kg.push(auxPre[trigger], "aux");
+      }
+      const style = color !== null ? `theme-${color}` : "default";
+      kg.push(trigger, style as KanjiStyle);
+      if (trigger in auxPost) {
+        kg.push(auxPost[trigger], "aux");
+      }
+
+      a.loadAudio(kg.asString());
+
+      setChunks([...chunks, kg]);
     }
   }
 

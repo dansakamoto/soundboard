@@ -1,11 +1,16 @@
 import * as googleTTS from "google-tts-api";
 import bigKanji2number from "../../utils/bigKanji2number";
 import fs from "fs";
+import { combinations } from "../../client/_data/characters";
 
 import type { Request, Response } from "express";
 
-const apiExceptions = ["十一", "二兆"];
 const fsLogging = false;
+const apiExceptions = ["十一", "二兆"];
+
+for (const c of combinations) {
+  apiExceptions.push(c.kanji);
+}
 
 export default async function getAudio(req: Request<string>, res: Response) {
   const serverPath = "downloads/ja/" + req.body.text + ".b64";

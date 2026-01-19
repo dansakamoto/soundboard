@@ -1,6 +1,7 @@
 import { characters } from "../_data/characters";
+import type { TapProps } from "../App";
 
-type TapHandler = (s: string) => void;
+type TapHandler = (p: TapProps) => void;
 
 export default function ButtonBoard({
   handleTap,
@@ -12,8 +13,10 @@ export default function ButtonBoard({
   const buttons = characters.map((char) => (
     <button
       key={"kanjigrid-" + char.kanji}
-      className="p-3 h-1/5"
-      onPointerDown={() => handleTap(char.kanji)}
+      className={`p-3 h-1/5 theme-${char.color}`}
+      onPointerDown={() =>
+        handleTap({ trigger: char.kanji, color: char.color })
+      }
       style={{ touchAction: "manipulation" }}
     >
       {char.kanji}
@@ -23,7 +26,7 @@ export default function ButtonBoard({
   const playbackButton = isPlaying ? (
     <button
       className="text-5xl"
-      onPointerDown={() => handleTap("stop")}
+      onPointerDown={() => handleTap({ trigger: "stop" })}
       style={{ touchAction: "manipulation" }}
     >
       ◼
@@ -31,7 +34,7 @@ export default function ButtonBoard({
   ) : (
     <button
       className="text-6xl"
-      onPointerDown={() => handleTap("play")}
+      onPointerDown={() => handleTap({ trigger: "play" })}
       style={{ touchAction: "manipulation" }}
     >
       ▶
