@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-
 import getTranslation from "../_utils/getTranslation";
-
 import KanjiGroup from "./KanjiGroup";
+import "./PhraseViewer.css";
 
 export default function PhraseViewer({
   chunks,
@@ -16,12 +15,21 @@ export default function PhraseViewer({
   useEffect(() => {
     if (isPlaying) {
       const v = document.getElementById("viewer");
-      const c = v !== null ? v.firstElementChild : null;
-      if (c !== null) c.scrollIntoView({ behavior: "smooth", inline: "start" });
+      v?.scroll({
+        top: 100,
+        left: -1000,
+        behavior: "smooth",
+      });
+      const c = v ? v.firstElementChild : null;
+      c?.scrollIntoView({
+        behavior: "smooth",
+        inline: "end",
+        block: "end",
+      });
     } else {
       const v = document.getElementById("viewer");
-      const c = v !== null ? v.lastElementChild : null;
-      if (c !== null) c.scrollIntoView({ behavior: "smooth", inline: "end" });
+      const c = v ? v.lastElementChild : null;
+      c?.scrollIntoView({ behavior: "smooth", inline: "end" });
     }
   });
 
@@ -32,9 +40,7 @@ export default function PhraseViewer({
       chunks.map((c) => (
         <li
           key={c.key}
-          className={
-            isPlaying ? baseStyle + " first:text-fuchsia-700" : baseStyle
-          }
+          className={isPlaying ? baseStyle + " playing" : baseStyle}
         >
           {c.segments.map((s) => (
             <span key={s.key} className={s.style}>
@@ -57,10 +63,12 @@ export default function PhraseViewer({
           : getTranslation(chunks[chunks.length - 1].asString());
 
   return (
-    <div className="h-1/6 mt-10 flex flex-col justify-evenlyr">
-      <ul id="viewer" className="flex justify-center overflow-hidden">
-        {phraseList}
-      </ul>
+    <div className="h-1/6 mt-10 flex flex-col justify-evenly">
+      <div className="flex justify-center">
+        <ul id="viewer" className="flex overflow-hidden">
+          {phraseList}
+        </ul>
+      </div>
       <div className="flex justify-center text-3xl">{translation}</div>
     </div>
   );
