@@ -49,6 +49,7 @@ export const characters: Character[] = [
   { kanji: "犬", translation: "dog" },
   { kanji: "猫", translation: "cat" },
   { kanji: "馬", translation: "horse" },
+  { kanji: "大", translation: "big" },
 ];
 
 export const ichiMods = {
@@ -58,3 +59,17 @@ export const ichiMods = {
 };
 
 export const issenException = "一千";
+
+export const auxPre: Record<string, string> = {
+  万: "一",
+  億: "一",
+  兆: "一",
+};
+
+export const auxPost: Record<string, string> = {
+  大: "きい",
+};
+
+export const combinations: Character[] = [
+  { kanji: "大きい", translation: "big" },
+];

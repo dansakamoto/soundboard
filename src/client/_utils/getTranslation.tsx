@@ -1,11 +1,12 @@
 import bigKanji2number from "../../utils/bigKanji2number";
-import { characters } from "../_data/characters";
+import { characters, combinations } from "../_data/characters";
 import { isValidNumber } from "./validators";
 
 const numFormatter = new Intl.NumberFormat("en-US");
 
 const translations: Record<string, string> = {};
-for (const c of characters) {
+
+for (const c of [...characters, ...combinations]) {
   translations[c.kanji] = c.translation;
 }
 

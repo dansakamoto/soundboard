@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AudioHandler } from "./_utils/AudioHandler";
 import { isValidNumber } from "./_utils/validators";
+import { auxPost, auxPre } from "./_data/characters";
 
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
@@ -66,18 +67,28 @@ export default function App() {
 
       a.loadAudio(newGroup);
 
-      if (["万", "億", "兆"].includes(trigger)) {
-        updated[updated.length - 1].push("一", "aux");
+      if (trigger in auxPre) {
+        updated[updated.length - 1].push(auxPre[trigger], "aux");
       }
       updated[updated.length - 1].push(trigger, "main");
+      if (trigger in auxPost) {
+        updated[updated.length - 1].push(auxPost[trigger], "aux");
+      }
 
       setChunks(updated);
     } else {
       const kg = new KanjiGroup();
-      if (["万", "億", "兆"].includes(trigger)) {
-        kg.push("一", "aux");
+
+      if (trigger in auxPre) {
+        kg.push(auxPre[trigger], "aux");
       }
       kg.push(trigger, "main");
+      if (trigger in auxPost) {
+        kg.push(auxPost[trigger], "aux");
+      }
+
+      a.loadAudio(kg.asString());
+
       setChunks([...chunks, kg]);
     }
   }
