@@ -4,11 +4,9 @@ import { isValidNumber } from "./_utils/validators";
 
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
-import { KanjiGroup } from "./_components/KanjiGroup";
+import KanjiGroup from "./_components/KanjiGroup";
 
 const a = new AudioHandler();
-
-let keyItr = 0;
 
 export default function App() {
   const [chunks, setChunks] = useState<KanjiGroup[]>([]);
@@ -18,7 +16,7 @@ export default function App() {
   function handleTap(trigger: string) {
     if (isPlaying) {
       if (trigger === "stop") {
-        a.interrupt = true;
+        a.cancelPlayback();
         setIsInterrupting(true);
       }
 
@@ -39,19 +37,19 @@ export default function App() {
 
     if (
       chunks.length > 0 &&
-      isValidNumber(chunks[chunks.length - 1].group + trigger)
+      isValidNumber(chunks[chunks.length - 1].asString() + trigger)
     ) {
       const updated = [...chunks];
-      const newGroup = chunks[chunks.length - 1].group + trigger;
+      const newGroup = chunks[chunks.length - 1].asString() + trigger;
       a.loadAudio(newGroup);
 
-      updated[updated.length - 1].group = newGroup;
+      updated[updated.length - 1].push(trigger, "main");
 
       setChunks(updated);
     } else if (
       chunks.length > 0 &&
       isValidNumber(
-        chunks[chunks.length - 1].group +
+        chunks[chunks.length - 1].asString() +
           trigger
             .replace("万", "一万")
             .replace("億", "一億")
@@ -59,27 +57,26 @@ export default function App() {
       )
     ) {
       const updated = [...chunks];
-      const newGroup =
-        chunks[chunks.length - 1].group +
-        trigger
-          .replace("万", "一万")
-          .replace("億", "一億")
-          .replace("兆", "一兆");
+      const triggerMod = trigger
+        .replace("万", "一万")
+        .replace("億", "一億")
+        .replace("兆", "一兆");
+      const newGroup = chunks[chunks.length - 1].asString() + triggerMod;
+
       a.loadAudio(newGroup);
 
-      updated[updated.length - 1].group = newGroup;
+      updated[updated.length - 1].push(triggerMod, "main");
 
       setChunks(updated);
     } else {
       setChunks([
         ...chunks,
-        {
-          key: "grouping-" + keyItr++,
-          group: trigger
+        new KanjiGroup(
+          trigger
             .replace("万", "一万")
             .replace("億", "一億")
             .replace("兆", "一兆"),
-        },
+        ),
       ]);
     }
   }

@@ -1,8 +1,7 @@
 import { characters, ichiMods, issenException } from "../_data/characters";
 
-import type { KanjiGroup } from "../_components/KanjiGroup";
+import KanjiGroup from "../_components/KanjiGroup";
 
-let keyItr = 0;
 const bufferAllowance = 1000;
 export class AudioHandler {
   constructor() {
@@ -73,10 +72,10 @@ export class AudioHandler {
 
     if (queue.length === 0) {
       this.currentlyPlaying = "";
-    } else if (this.loadedAudio[queue[0].group]) {
+    } else if (this.loadedAudio[queue[0].asString()]) {
       this.currentlyPlaying = queue[0].key;
       const source = this.audioContext.createBufferSource();
-      source.buffer = this.loadedAudio[queue[0].group];
+      source.buffer = this.loadedAudio[queue[0].asString()];
       source.connect(this.audioContext.destination);
       source.onended = () => {
         callback(queue.slice(1));
@@ -91,16 +90,17 @@ export class AudioHandler {
     } else {
       this.waitRemaining = bufferAllowance;
       const explodedGroup = [];
-      for (const c of queue[0].group) {
-        explodedGroup.push({
-          key: "exploded-" + keyItr++,
-          group: c,
-        });
+      for (const c of queue[0].asString()) {
+        explodedGroup.push(new KanjiGroup(c));
       }
       const newQueue = [...explodedGroup, ...queue.slice(1)];
       callback(newQueue);
       this.playQueue(newQueue, callback);
     }
+  }
+
+  cancelPlayback() {
+    this.interrupt = true;
   }
 }
 

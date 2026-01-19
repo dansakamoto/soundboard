@@ -1,33 +1,25 @@
-export type Character = { kanji: string; translation: string };
-
 type KanjiStyle = "main" | "aux";
-type GroupPart = { kanji: string; style: KanjiStyle };
+type GroupPart = { key: string; kanji: string; style: KanjiStyle };
 
-export class KanjiGroup {
+let keyItr = 0;
+
+export default class KanjiGroup {
   key: string;
-  group: GroupPart[];
+  segments: GroupPart[];
 
   constructor(g: string) {
-    this.key = g;
-    this.group = [{ kanji: g, style: "main" }];
+    this.key = "grouping-" + keyItr++;
+    this.segments = [{ key: `segment-${keyItr++}`, kanji: g, style: "main" }];
   }
 
   push(k: string, s: KanjiStyle) {
-    this.group.push({ kanji: k, style: s });
+    this.segments.push({ key: `segment-${keyItr++}`, kanji: k, style: s });
   }
 
   asString() {
     let s = "";
-    for (const g of this.group) {
-      s += g;
-    }
-    return s;
-  }
-
-  asHTML() {
-    let s = "";
-    for (const g of this.group) {
-      s += `<span class='kanji-${g.style}'>${g.kanji}</span>`;
+    for (const g of this.segments) {
+      s += g.kanji;
     }
     return s;
   }

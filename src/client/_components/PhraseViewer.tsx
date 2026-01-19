@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import getTranslation from "../_utils/getTranslation";
 
-import type { KanjiGroup } from "./KanjiGroup";
+import KanjiGroup from "./KanjiGroup";
 
 export default function PhraseViewer({
   chunks,
@@ -29,14 +29,18 @@ export default function PhraseViewer({
 
   const phraseList =
     chunks.length > 0 ? (
-      chunks.map((s) => (
+      chunks.map((c) => (
         <li
-          key={s.key}
+          key={c.key}
           className={
             isPlaying ? baseStyle + " first:text-fuchsia-700" : baseStyle
           }
         >
-          {s.group}
+          {c.segments.map((s) => (
+            <span key={s.key} className={s.style}>
+              {s.kanji}
+            </span>
+          ))}
         </li>
       ))
     ) : (
@@ -49,8 +53,8 @@ export default function PhraseViewer({
       : chunks.length === 0
         ? ""
         : isPlaying
-          ? getTranslation(chunks[0].group)
-          : getTranslation(chunks[chunks.length - 1].group);
+          ? getTranslation(chunks[0].asString())
+          : getTranslation(chunks[chunks.length - 1].asString());
 
   return (
     <div className="h-1/6 mt-10 flex flex-col justify-evenlyr">
