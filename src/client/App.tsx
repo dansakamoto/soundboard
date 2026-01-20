@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AudioHandler } from "./_utils/AudioHandler";
 import { isValidNumber } from "./_utils/validators";
-import { auxPost, auxPre } from "./_data/characters";
+import { auxPost, auxPre, combinations, addIchiMod } from "./_data/characters";
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
 import KanjiGroup, { type KanjiStyle } from "./_components/KanjiGroup";
@@ -44,64 +44,60 @@ export default function App() {
 
     a.playInstance(trigger);
 
-    if (
-      chunks.length > 0 &&
-      isValidNumber(chunks[chunks.length - 1].asString() + trigger)
-    ) {
-      const updated = [...chunks];
-      const newGroup = chunks[chunks.length - 1].asString() + trigger;
-      a.loadAudio(newGroup);
+    if (chunks.length > 0) {
+      const latest = chunks[chunks.length - 1].asString();
 
-      const style = color !== null ? `theme-${color}` : "default";
-      updated[updated.length - 1].push(trigger, style as KanjiStyle);
-
-      setChunks(updated);
-    } else if (
-      chunks.length > 0 &&
-      isValidNumber(
-        chunks[chunks.length - 1].asString() +
-          trigger
-            .replace("万", "一万")
-            .replace("億", "一億")
-            .replace("兆", "一兆"),
-      )
-    ) {
-      const updated = [...chunks];
-
-      const triggerMod = trigger
-        .replace("万", "一万")
-        .replace("億", "一億")
-        .replace("兆", "一兆");
-      const newGroup = chunks[chunks.length - 1].asString() + triggerMod;
-
-      a.loadAudio(newGroup);
-
-      if (trigger in auxPre) {
-        updated[updated.length - 1].push(auxPre[trigger], "aux");
+      if (isValidNumber(latest + trigger)) {
+        updateLastChunk(trigger, false, color);
+      } else if (isValidNumber(latest + addIchiMod(trigger))) {
+        updateLastChunk(trigger, true, color);
+      } else if (trigger === "円" && isValidNumber(latest)) {
+        updateLastChunk(trigger, false, color);
+      } else if (combinations.find(({ kanji }) => kanji === latest + trigger)) {
+        updateLastChunk(trigger, false, color);
+      } else {
+        startNewChunk(trigger, color);
       }
-      const style = color !== null ? `theme-${color}` : "default";
-      updated[updated.length - 1].push(trigger, style as KanjiStyle);
-      if (trigger in auxPost) {
-        updated[updated.length - 1].push(auxPost[trigger], "aux");
-      }
-
-      setChunks(updated);
     } else {
-      const kg = new KanjiGroup();
-
-      if (trigger in auxPre) {
-        kg.push(auxPre[trigger], "aux");
-      }
-      const style = color !== null ? `theme-${color}` : "default";
-      kg.push(trigger, style as KanjiStyle);
-      if (trigger in auxPost) {
-        kg.push(auxPost[trigger], "aux");
-      }
-
-      a.loadAudio(kg.asString());
-
-      setChunks([...chunks, kg]);
+      startNewChunk(trigger, color);
     }
+  }
+
+  function startNewChunk(trigger: string, color?: number) {
+    const kg = new KanjiGroup();
+
+    if (trigger in auxPre) {
+      kg.push(auxPre[trigger], "aux");
+    }
+    const style = color !== null ? `theme-${color}` : "default";
+    kg.push(trigger, style as KanjiStyle);
+    if (trigger in auxPost) {
+      kg.push(auxPost[trigger], "aux");
+    }
+
+    a.loadAudio(kg.asString());
+
+    setChunks([...chunks, kg]);
+  }
+
+  function updateLastChunk(trigger: string, checkAux: boolean, color?: number) {
+    const updatedChunks = [...chunks];
+    const lastChunk = updatedChunks[updatedChunks.length - 1];
+
+    const style = color !== null ? `theme-${color}` : "default";
+
+    if (checkAux && trigger in auxPre) {
+      lastChunk.push(auxPre[trigger], "aux");
+    }
+    lastChunk.push(trigger, style as KanjiStyle);
+    if (checkAux && trigger in auxPost) {
+      lastChunk.push(auxPost[trigger], "aux");
+    }
+
+    a.loadAudio(lastChunk.asString());
+
+    updatedChunks[updatedChunks.length - 1] = lastChunk;
+    setChunks(updatedChunks);
   }
 
   function audioCallback(c: KanjiGroup[]) {

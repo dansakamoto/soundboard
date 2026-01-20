@@ -70,6 +70,11 @@ export const ichiMods = {
   兆: "一兆",
 };
 
+export function addIchiMod(s: string) {
+  for (const [k, v] of Object.entries(ichiMods)) s = s.replace(k, v);
+  return s;
+}
+
 export const issenException = "一千";
 
 export const auxPre: Record<string, string> = {
@@ -86,4 +91,6 @@ export const auxPost: Record<string, string> = {
 export const combinations: Character[] = [
   { kanji: "大きい", translation: "big" },
   { kanji: "小さい", translation: "small" },
+  { kanji: "電車", translation: "🚂 train 🚂" },
+  { kanji: "坂本", translation: "sakamoto" },
 ];
