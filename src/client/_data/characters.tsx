@@ -93,4 +93,5 @@ export const combinations: Character[] = [
   { kanji: "小さい", translation: "small" },
   { kanji: "電車", translation: "🚂 train 🚂" },
   { kanji: "坂本", translation: "sakamoto" },
+  { kanji: "日本", translation: "🇯🇵 japan 🗾" },
 ];
