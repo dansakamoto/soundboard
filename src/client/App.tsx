@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { AudioHandler } from "./_utils/AudioHandler";
 import { isValidNumber } from "./_utils/validators";
-import { auxPost, auxPre, combinations, addIchiMod } from "./_data/characters";
+import {
+  auxPost,
+  auxPre,
+  combinations,
+  addIchiMod,
+  mutations,
+  type mutationRules,
+} from "./_data/characters";
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
 import KanjiGroup, { type KanjiStyle } from "./_components/KanjiGroup";
@@ -47,13 +54,22 @@ export default function App() {
       const latest = chunks[chunks.length - 1].asString();
 
       if (isValidNumber(latest + trigger)) {
-        updateLastChunk(trigger, false, color);
+        addToLastChunk({ trigger: trigger, checkAux: false, color: color });
       } else if (isValidNumber(latest + addIchiMod(trigger))) {
-        updateLastChunk(trigger, true, color);
+        addToLastChunk({ trigger: trigger, checkAux: true, color: color });
       } else if (trigger === "円" && isValidNumber(latest)) {
-        updateLastChunk(trigger, false, color);
+        addToLastChunk({ trigger: trigger, checkAux: false, color: color });
       } else if (combinations.find(({ kanji }) => kanji === latest + trigger)) {
-        updateLastChunk(trigger, false, color);
+        addToLastChunk({ trigger: trigger, checkAux: true, color: color });
+      } else if (
+        latest in mutations &&
+        mutations[latest].matches.includes(trigger)
+      ) {
+        mutateLastChunk({
+          trigger: trigger,
+          rules: mutations[latest],
+          color: color,
+        });
       } else {
         startNewChunk(trigger, color);
       }
@@ -81,7 +97,16 @@ export default function App() {
     setChunks([...chunks, kg]);
   }
 
-  function updateLastChunk(trigger: string, checkAux: boolean, color?: number) {
+  interface chunkUpdate {
+    trigger: string;
+    checkAux: boolean;
+    color?: number;
+  }
+  function addToLastChunk(c: chunkUpdate) {
+    const trigger = c.trigger;
+    const checkAux = c.checkAux;
+    const color = c.color;
+
     const updatedChunks = [...chunks];
     const lastChunk = updatedChunks[updatedChunks.length - 1];
 
@@ -94,6 +119,31 @@ export default function App() {
     if (checkAux && trigger in auxPost) {
       lastChunk.push(auxPost[trigger], "aux");
     }
+
+    a.loadAudio(lastChunk.asString());
+
+    updatedChunks[updatedChunks.length - 1] = lastChunk;
+    setChunks(updatedChunks);
+  }
+
+  interface mutation {
+    trigger: string;
+    rules: mutationRules;
+    color?: number;
+  }
+  function mutateLastChunk(m: mutation) {
+    const trigger = m.trigger;
+    const rules = m.rules;
+    const color = m.color;
+
+    const updatedChunks = [...chunks];
+    const lastChunk = updatedChunks[updatedChunks.length - 1];
+
+    for (let i = 0; i < rules.deletions; i++) lastChunk.pop();
+    lastChunk.push(rules.newChars, "aux");
+
+    const style = color !== null ? `theme-${color}` : "default";
+    lastChunk.push(trigger, style as KanjiStyle);
 
     a.loadAudio(lastChunk.asString());
 

@@ -1,6 +1,7 @@
 type Character = {
   kanji: string;
   translation: string;
+  type?: "scalable"[];
   color?: number;
 };
 
@@ -23,41 +24,41 @@ export const characters: Character[] = [
     kanji: "兆",
     translation: "1,000,000,000,000",
   },
-  { kanji: "目", translation: "👁️ eye 👁️" },
-  { kanji: "口", translation: "👄 mouth 👄" },
-  { kanji: "耳", translation: "👂 ear 👂" },
-  { kanji: "手", translation: "👋 hand 👋" },
-  { kanji: "足", translation: "🦶 foot 🦶" },
+  { kanji: "目", translation: "👁️ eye 👁️", type: ["scalable"] },
+  { kanji: "口", translation: "👄 mouth 👄", type: ["scalable"] },
+  { kanji: "耳", translation: "👂 ear 👂", type: ["scalable"] },
+  { kanji: "手", translation: "👋 hand 👋", type: ["scalable"] },
+  { kanji: "足", translation: "🦶 foot 🦶", type: ["scalable"] },
   { kanji: "火", translation: "🔥 fire 🔥" },
   { kanji: "水", translation: "💧 water 💧" },
-  { kanji: "木", translation: "🌳 tree 🌳" },
+  { kanji: "木", translation: "🌳 tree 🌳", type: ["scalable"] },
   { kanji: "日", translation: "☀️ sun ☀️" },
   { kanji: "空", translation: "sky" },
   { kanji: "山", translation: "⛰️ mountain ⛰️" },
   { kanji: "川", translation: "river" },
   { kanji: "森", translation: "forest" },
-  { kanji: "花", translation: "🌷 flower 🌷" },
+  { kanji: "花", translation: "🌷 flower 🌷", type: ["scalable"] },
   { kanji: "坂", translation: "hill" },
   { kanji: "風", translation: "💨 wind 💨" },
-  { kanji: "本", translation: "📘 book 📘" },
-  { kanji: "車", translation: "🚙 car 🚙" },
+  { kanji: "本", translation: "📘 book 📘", type: ["scalable"] },
+  { kanji: "車", translation: "🚙 car 🚙", type: ["scalable"] },
   { kanji: "円", translation: "yen" },
-  { kanji: "家", translation: "🏠 house 🏠" },
+  { kanji: "家", translation: "🏠 house 🏠", type: ["scalable"] },
   { kanji: "電", translation: "⚡️ electric ⚡️" },
   { kanji: "色", translation: "🌈 color 🌈" },
   { kanji: "青", translation: "🔵 blue 🔵" },
   { kanji: "赤", translation: "🔴 red 🔴" },
   { kanji: "夜", translation: "🌃 evening 🌃" },
   { kanji: "朝", translation: "🌅 morning 🌅" },
-  { kanji: "鳥", translation: "🦜 bird 🦜" },
-  { kanji: "犬", translation: "🐶 dog 🐶" },
-  { kanji: "猫", translation: "🐈 cat 🐈" },
-  { kanji: "馬", translation: "🐴 horse 🐴" },
+  { kanji: "鳥", translation: "🦜 bird 🦜", type: ["scalable"] },
+  { kanji: "犬", translation: "🐶 dog 🐶", type: ["scalable"] },
+  { kanji: "猫", translation: "🐈 cat 🐈", type: ["scalable"] },
+  { kanji: "馬", translation: "🐴 horse 🐴", type: ["scalable"] },
   { kanji: "大", translation: "big" },
   { kanji: "小", translation: "small" },
-  { kanji: "母", translation: "mom" },
-  { kanji: "父", translation: "dad" },
-  { kanji: "卵", translation: "🍳 egg 🥚" },
+  { kanji: "母", translation: "mom", type: ["scalable"] },
+  { kanji: "父", translation: "dad", type: ["scalable"] },
+  { kanji: "卵", translation: "🍳 egg 🥚", type: ["scalable"] },
 ];
 
 for (let i = 0; i < characters.length; i++) {
@@ -95,3 +96,42 @@ export const combinations: Character[] = [
   { kanji: "坂本", translation: "sakamoto" },
   { kanji: "日本", translation: "🇯🇵 japan 🗾" },
 ];
+
+const scalable = [];
+for (const c of characters) {
+  if (c.type !== undefined && c.type.includes("scalable")) {
+    scalable.push(c.kanji);
+  }
+}
+
+for (const x of [
+  ["大きな", "big "],
+  ["小さな", "small "],
+]) {
+  for (const y of characters) {
+    if (y.type !== undefined && y.type.includes("scalable")) {
+      combinations.push({
+        kanji: `${x[0]}${y.kanji}`,
+        translation: `${x[1]} ${y.translation}`,
+      });
+    }
+  }
+}
+
+export interface mutationRules {
+  matches: string[];
+  deletions: number;
+  newChars: string;
+}
+export const mutations: Record<string, mutationRules> = {
+  大きい: {
+    matches: scalable,
+    deletions: 1,
+    newChars: "きな",
+  },
+  小さい: {
+    matches: scalable,
+    deletions: 1,
+    newChars: "さな",
+  },
+};

@@ -9,17 +9,24 @@ export type KanjiStyle =
 type GroupPart = { key: string; kanji: string; style: KanjiStyle };
 
 let keyItr = 0;
+function uniqueKey() {
+  return keyItr++;
+}
 
 export default class KanjiGroup {
   key: string;
   segments: GroupPart[] = [];
 
   constructor() {
-    this.key = "grouping-" + keyItr++;
+    this.key = "grouping-" + uniqueKey();
+  }
+
+  pop() {
+    this.segments.pop();
   }
 
   push(k: string, s: KanjiStyle) {
-    this.segments.push({ key: `segment-${keyItr++}`, kanji: k, style: s });
+    this.segments.push({ key: `segment-${uniqueKey()}`, kanji: k, style: s });
   }
 
   asString() {
@@ -30,7 +37,7 @@ export default class KanjiGroup {
     return s;
   }
 
-  kanjiOnly() {
+  omitAux() {
     let s = "";
     for (const g of this.segments) {
       if (g.style !== "aux") s += g.kanji;
