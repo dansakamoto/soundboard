@@ -43,7 +43,14 @@ export default function PhraseViewer({
           className={isPlaying ? baseStyle + " playing" : baseStyle}
         >
           {c.segments.map((s) => (
-            <span key={s.key} className={s.style}>
+            <span
+              key={s.key}
+              className={
+                s.style +
+                (s.kanji === "赤" ? " override-red" : "") +
+                (s.kanji === "青" ? " override-blue" : "")
+              }
+            >
               {s.kanji}
             </span>
           ))}

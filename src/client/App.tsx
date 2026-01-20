@@ -5,7 +5,6 @@ import { auxPost, auxPre, combinations, addIchiMod } from "./_data/characters";
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
 import KanjiGroup, { type KanjiStyle } from "./_components/KanjiGroup";
-import "./_style/theme-colors.css";
 
 const a = new AudioHandler();
 
@@ -69,7 +68,9 @@ export default function App() {
     if (trigger in auxPre) {
       kg.push(auxPre[trigger], "aux");
     }
+
     const style = color !== null ? `theme-${color}` : "default";
+
     kg.push(trigger, style as KanjiStyle);
     if (trigger in auxPost) {
       kg.push(auxPost[trigger], "aux");

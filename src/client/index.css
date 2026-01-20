@@ -12,6 +12,15 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --theme-orange: rgb(245, 56, 23);
+  --theme-blue: rgb(30, 102, 172);
+  --theme-green: rgb(0, 128, 1);
+  --theme-yellow: rgb(239, 187, 2);
+  --theme-brown: rgb(134, 74, 0);
+  --theme-red: rgb(245, 0, 0);
+  --theme-fuscha: oklch(51.8% 0.253 323.949);
+  --theme-aux: oklch(60% 0 0);
 }
 
 a {
@@ -28,4 +37,33 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+}
+
+.aux {
+  color: var(--theme-aux);
+}
+
+.playing:first-child {
+  border: 3px solid var(--theme-fuscha);
+  border-radius: 20px;
+}
+
+.theme-0 {
+  color: var(--theme-orange);
+}
+
+.theme-1 {
+  color: var(--theme-blue);
+}
+
+.theme-2 {
+  color: var(--theme-green);
+}
+
+.theme-3 {
+  color: var(--theme-yellow);
+}
+
+.theme-4 {
+  color: var(--theme-brown);
 }
