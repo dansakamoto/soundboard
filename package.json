@@ -1,7 +1,7 @@
 {
   "name": "soundboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "nodemon -w src -x tsx src/server/main.ts",
