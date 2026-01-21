@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest";
-import { isValidNumber } from "../_utils/validators.tsx";
+import { isValidNumber } from "../../_utils/validators.tsx";
 import getTranslation from "../_utils/getTranslation.tsx";
 
 describe("isValidNumber() tests", () => {

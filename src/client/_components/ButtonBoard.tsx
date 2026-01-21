@@ -1,4 +1,4 @@
-import { characters } from "../_data/characters";
+import { characters } from "../../_data/characters";
 import type { TapProps } from "../App";
 
 type TapHandler = (p: TapProps) => void;

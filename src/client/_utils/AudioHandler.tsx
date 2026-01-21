@@ -1,4 +1,4 @@
-import { characters, ichiMods, issenException } from "../_data/characters";
+import { characters, ichiMods, issenException } from "../../_data/characters";
 
 import KanjiGroup from "../_components/KanjiGroup";
 

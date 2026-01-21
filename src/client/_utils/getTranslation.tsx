@@ -1,6 +1,6 @@
-import bigKanji2number from "../../utils/bigKanji2number";
-import { characters, combinations } from "../_data/characters";
-import { isValidNumber } from "./validators";
+import bigKanji2number from "../../_utils/bigKanji2number";
+import { characters, combinations } from "../../_data/characters";
+import { isValidNumber } from "../../_utils/validators";
 
 const numFormatter = new Intl.NumberFormat("en-US");
 

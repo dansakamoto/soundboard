@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AudioHandler } from "./_utils/AudioHandler";
-import { isValidNumber } from "./_utils/validators";
+import { isValidNumber } from "../_utils/validators";
 import {
   auxPost,
   auxPre,
@@ -8,7 +8,7 @@ import {
   addIchiMod,
   mutations,
   type mutationRules,
-} from "./_data/characters";
+} from "../_data/characters";
 import PhraseViewer from "./_components/PhraseViewer";
 import ButtonBoard from "./_components/ButtonBoard";
 import KanjiGroup, { type KanjiStyle } from "./_components/KanjiGroup";
@@ -139,7 +139,7 @@ export default function App() {
     const updatedChunks = [...chunks];
     const lastChunk = updatedChunks[updatedChunks.length - 1];
 
-    for (let i = 0; i < rules.deletions; i++) lastChunk.pop();
+    lastChunk.backspace(rules.deletions);
     lastChunk.push(rules.newChars, "aux");
 
     const style = color !== null ? `theme-${color}` : "default";

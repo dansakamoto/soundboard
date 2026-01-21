@@ -1,6 +1,7 @@
 export type KanjiStyle =
   | "default"
   | "aux"
+  | "aux-2"
   | "theme-0"
   | "theme-1"
   | "theme-2"
@@ -23,6 +24,16 @@ export default class KanjiGroup {
 
   pop() {
     this.segments.pop();
+  }
+
+  backspace(n: number) {
+    if (n === 0) return;
+
+    const i = this.segments.length - 1;
+
+    this.segments[i].kanji = this.segments[i].kanji.slice(0, -n);
+    this.segments[i].style = "aux-2";
+    this.segments[i].key = "segment-" + uniqueKey();
   }
 
   push(k: string, s: KanjiStyle) {

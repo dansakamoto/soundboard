@@ -1,7 +1,8 @@
 import * as googleTTS from "google-tts-api";
-import bigKanji2number from "../../utils/bigKanji2number";
+import bigKanji2number from "../../_utils/bigKanji2number";
 import fs from "fs";
-import { combinations } from "../../client/_data/characters";
+import { combinations } from "../../_data/characters";
+import { isValidNumber } from "../../_utils/validators";
 
 import type { Request, Response } from "express";
 
@@ -31,10 +32,11 @@ export default async function getAudio(req: Request<string>, res: Response) {
   if (fsLogging) console.log("File not found, requesting from API");
 
   const t = req.body.text;
-  const num =
-    apiExceptions.includes(t) || t.slice(-1) === "円" ? t : bigKanji2number(t);
 
-  const audioData = await googleTTS.getAudioBase64(num.toString(), {
+  const txt =
+    !apiExceptions.includes(t) && isValidNumber(t) ? bigKanji2number(t) : t;
+
+  const audioData = await googleTTS.getAudioBase64(txt.toString(), {
     lang: "ja",
     slow: false,
     host: "https://translate.google.com",

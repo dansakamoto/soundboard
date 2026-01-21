@@ -39,7 +39,8 @@ body {
   min-height: 100vh;
 }
 
-.aux {
+.aux,
+.aux-2 {
   color: var(--theme-aux);
 }
 

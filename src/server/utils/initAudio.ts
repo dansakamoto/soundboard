@@ -9,11 +9,7 @@ import * as googleTTS from "google-tts-api";
 import { kanji2number } from "@geolonia/japanese-numeral";
 import fetch from "node-fetch";
 
-import {
-  characters,
-  ichiMods,
-  issenException,
-} from "../../client/_data/characters";
+import { characters, ichiMods, issenException } from "../../_data/characters";
 
 const highNums = Object.keys(ichiMods).concat([issenException]);
 
